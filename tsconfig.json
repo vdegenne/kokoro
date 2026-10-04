@@ -8,6 +8,7 @@
 		"experimentalDecorators": true,
 		"noUncheckedIndexedAccess": true,
 		"outDir": "./lib",
+		"rootDir": "./src",
 		"declaration": true,
 		"declarationMap": true,
 		"sourceMap": true

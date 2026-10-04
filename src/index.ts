@@ -266,7 +266,7 @@ class KokoroClient extends ReactiveController {
 			throw new Error('Kokoro has no available voices');
 		}
 
-		return this.voices[Math.floor(Math.random() * this.voices.length)].id;
+		return this.voices[Math.floor(Math.random() * this.voices.length)]!.id;
 	}
 
 	getVoiceTitleFromId(voiceId: Voice) {
