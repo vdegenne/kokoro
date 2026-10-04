@@ -274,4 +274,4 @@ class KokoroClient extends ReactiveController {
 	}
 }
 
-export const kokoro = new KokoroClient();
+// export const kokoro = new KokoroClient();
