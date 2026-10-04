@@ -6,7 +6,7 @@ interface KokoroVoice {
 }
 
 // prettier-ignore
-const availableVoices = {
+export const availableVoices = {
 	en: ['af_heart', 'af_aoede', 'af_bella', 'af_jessica', 'af_kore', 'af_nicole', 'af_nova', 'af_river', 'af_sarah', 'af_sky', 'af_alloy', 'am_adam', 'am_michael', 'am_echo', 'am_eric', 'am_fenrir', 'am_liam', 'am_onyx', 'am_puck', 'am_santa', 'bf_emma', 'bf_isabella', 'bf_alice', 'bf_lily', 'bm_george', 'bm_lewis', 'bm_daniel', 'bm_fable'],
 	es: ['ef_dora', 'em_alex', 'em_santa'],
 	fr: ['ff_siwis'],
@@ -17,9 +17,9 @@ const availableVoices = {
 	zh: ['zf_xiaobei', 'zf_xiaoni', 'zf_xiaoxiao', 'zf_xiaoyi', 'zm_yunjian', 'zm_yunxi', 'zm_yunxia', 'zm_yunyang'],
 } as const;
 
-type Language = keyof typeof availableVoices;
+export type Language = keyof typeof availableVoices;
 
-type Voice = (typeof availableVoices)[Language][number];
+export type Voice = (typeof availableVoices)[Language][number];
 
 interface PlayOptions {
 	voiceId?: Voice;
