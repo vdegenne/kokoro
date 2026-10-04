@@ -18,7 +18,7 @@ interface PlayOptions {
 
 type CachedAudio = Blob | Promise<Blob>;
 
-class KokoroClient extends ReactiveController {
+export class KokoroClient extends ReactiveController {
 	@state() state:
 		'disconnected' | 'connecting' | 'connection_error' | 'connected' =
 		'disconnected';
