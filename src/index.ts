@@ -12,6 +12,15 @@ export const availableVoices = {
 	zh: ['zf_xiaobei', 'zf_xiaoni', 'zf_xiaoxiao', 'zf_xiaoyi', 'zm_yunjian', 'zm_yunxi', 'zm_yunxia', 'zm_yunyang'],
 } as const;
 
+export type EnVoice = (typeof availableVoices)['en'][number];
+export type EsVoice = (typeof availableVoices)['es'][number];
+export type FrVoice = (typeof availableVoices)['fr'][number];
+export type HiVoice = (typeof availableVoices)['hi'][number];
+export type ItVoice = (typeof availableVoices)['it'][number];
+export type JaVoice = (typeof availableVoices)['ja'][number];
+export type PtVoice = (typeof availableVoices)['pt'][number];
+export type ZhVoice = (typeof availableVoices)['zh'][number];
+
 export type Language = keyof typeof availableVoices;
 
 export type Voice = (typeof availableVoices)[Language][number];
