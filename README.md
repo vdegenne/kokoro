@@ -1,6 +1,6 @@
 # @vdegenne/kokoro
 
-Snar Reactive Controller TS Helper to interact with Kokoro TTS server.
+Snar reactive controller TS helper to interact with Kokoro TTS server.
 
 ## Install
 
