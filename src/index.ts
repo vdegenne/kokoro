@@ -1,10 +1,5 @@
 import {ReactiveController, state} from '@snar/lit';
 
-interface KokoroVoice {
-	id: Voice;
-	description: string;
-}
-
 // prettier-ignore
 export const availableVoices = {
 	en: ['af_heart', 'af_aoede', 'af_bella', 'af_jessica', 'af_kore', 'af_nicole', 'af_nova', 'af_river', 'af_sarah', 'af_sky', 'af_alloy', 'am_adam', 'am_michael', 'am_echo', 'am_eric', 'am_fenrir', 'am_liam', 'am_onyx', 'am_puck', 'am_santa', 'bf_emma', 'bf_isabella', 'bf_alice', 'bf_lily', 'bm_george', 'bm_lewis', 'bm_daniel', 'bm_fable'],
@@ -20,6 +15,11 @@ export const availableVoices = {
 export type Language = keyof typeof availableVoices;
 
 export type Voice = (typeof availableVoices)[Language][number];
+
+interface KokoroVoice {
+	id: Voice;
+	description: string;
+}
 
 interface PlayOptions {
 	voiceId?: Voice;
@@ -282,6 +282,10 @@ export class KokoroClient extends ReactiveController {
 
 	getVoiceTitleFromId(voiceId: Voice) {
 		return this.voices.find((voice) => voice.id === voiceId)?.description;
+	}
+
+	getVoiceIds() {
+		return this.voices.map((v) => v.id);
 	}
 }
 
