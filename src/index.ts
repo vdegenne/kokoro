@@ -290,7 +290,10 @@ export class KokoroClient extends ReactiveController {
 	}
 
 	getVoiceTitleFromId(voiceId: Voice) {
-		return this.voices.find((voice) => voice.id === voiceId)?.description;
+		const voice = this.voices.find((voice) => voice.id === voiceId);
+		if (voice) {
+			return `${voice.id} (${voice?.description})`;
+		}
 	}
 
 	getVoiceIds() {
