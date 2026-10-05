@@ -10,7 +10,7 @@ npm i -D @vdegenne/kokoro
 
 ## Usage
 
-First run `vdegenne/kokoro-server` on your machine
+First run [`vdegenne/kokoro-server`](https://hub.docker.com/r/vdegenne/kokoro-server) on your machine
 
 ```bash
 docker run --rm -p 127.0.0.1:8880:8880 \
