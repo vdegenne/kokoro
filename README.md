@@ -23,7 +23,9 @@ docker run --rm -p 127.0.0.1:8880:8880 \
 Then in your web app
 
 ```ts
-import {kokoro} from '@vdegenne/kokoro';
+import {KokoroClient} from '@vdegenne/kokoro';
+
+const kokoro = new KokoroClient();
 
 try {
 	await kokoro.connect();
@@ -49,9 +51,11 @@ kokoro.play(
 `kokoro` is a controller, you can bind it to a `LitElement` custom element.
 
 ```ts
-import {kokoro} from '@vdegenne/kokoro';
+import {KokoroClient} from '@vdegenne/kokoro';
 import {LitElement, customElement} from 'lit';
 import {withController} from '@snar/lit';
+
+const kokoro = new KokoroClient();
 
 @customElement('settings-dialog')
 @withController(kokoro)
