@@ -281,12 +281,22 @@ export class KokoroClient extends ReactiveController {
 		return `${voiceId}:${speed}:${sentence}`;
 	}
 
-	getRandomVoiceId(): Voice {
-		if (this.voices.length === 0) {
-			throw new Error('Kokoro has no available voices');
+	getRandomVoiceId<L extends Language>({
+		lang,
+		exclude = [],
+	}: {
+		lang: L;
+		exclude?: (typeof availableVoices)[L][number][];
+	}): (typeof availableVoices)[L][number] {
+		const voices = availableVoices[lang].filter(
+			(voice) => !exclude.includes(voice),
+		);
+
+		if (voices.length === 0) {
+			throw new Error(`Kokoro has no available voices for ${lang}`);
 		}
 
-		return this.voices[Math.floor(Math.random() * this.voices.length)]!.id;
+		return voices[Math.floor(Math.random() * voices.length)]!;
 	}
 
 	getVoiceTitleFromId(voiceId: Voice) {
