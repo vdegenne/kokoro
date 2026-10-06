@@ -1,7 +1,19 @@
 import {html} from 'lit-html';
 import {availableVoices, KokoroClient, Language} from './index.js';
-import {SELECT, SWITCH} from '@vdegenne/forms/FormBuilder.js';
+import {SELECT, SLIDER, SWITCH} from '@vdegenne/forms/FormBuilder.js';
 
+/**
+ * Imports you'll need:
+ * import '@material/web/select/filled-select.js';
+ * import '@material/web/select/select-option.js';
+ * import '@material/web/button/filled-tonal-button.js';
+ * import '@material/web/select/select-option.js';
+ * import '@material/web/list/list-item.js';
+ * import '@material/web/switch/switch.js';
+ * import '@material/web/progress/circular-progress.js';
+ * import '@material/web/icon/icon.js'
+ * import '@material/web/slider/slider.js';
+ */
 export function kokoroSettingsTemplate(
 	kokoro: KokoroClient,
 	store: any,
@@ -9,7 +21,7 @@ export function kokoroSettingsTemplate(
 ) {
 	switch (kokoro.state) {
 		case 'disconnected':
-			break;
+			return 'Kokoro is disconnected';
 		case 'connecting':
 			return html`<!-- -->
 				<md-list-item>
@@ -34,7 +46,6 @@ export function kokoroSettingsTemplate(
 				</md-list-item>
 				<!-- -->`;
 		case 'connected':
-			// console.log(store[`kokoro${lang}VoiceId`])
 			return html`<!-- -->
 				${SELECT(
 					'Voice',
@@ -46,13 +57,7 @@ export function kokoroSettingsTemplate(
 					},
 				)}
 				${SWITCH('Random voice', store, `kokoro${lang}Random`)}
-				<!-- ${store.F.SLIDER('Voice speed', 'voicevoxVoiceSpeed', {min: 0.1, max: 1.9, step: 0.1})} -->
-				<md-list-item ?hidden="${true || !store[`kokoro${lang}LastVoiceUsed`]}">
-					<md-icon slot="start">history</md-icon>
-					<div slot="headline">
-						Last voice used: ${store[`kokoro${lang}LastVoiceUsed`]}
-					</div>
-				</md-list-item>
+				${SLIDER('Voice speed', store, `kokoro${lang}Speed`, {min: 0.1, max: 1.9, step: 0.1})}
 				<!-- -->`;
 	}
 }
