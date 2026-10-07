@@ -108,14 +108,14 @@ export class KokoroClient extends ReactiveController {
 	private pendingPlays = new Set<string>();
 
 	async play(
-		sentence: string,
+		text: string,
 		{voiceId = 'af_heart', speed = 1, volume = 1}: PlayOptions = {},
 	) {
 		if (this.state !== 'connected') {
 			throw new Error('Kokoro is not connected');
 		}
 
-		const key = this.getCacheKey(sentence, voiceId, speed);
+		const key = this.getCacheKey(text, voiceId, speed);
 
 		if (this.pendingPlays.has(key)) {
 			return;
@@ -136,7 +136,7 @@ export class KokoroClient extends ReactiveController {
 			let cached = this.cache.get(key);
 
 			if (!cached) {
-				const promise = this.fetchAudio(sentence, voiceId, speed);
+				const promise = this.fetchAudio(text, voiceId, speed);
 
 				this.cache.set(key, promise);
 
