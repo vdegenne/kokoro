@@ -1,6 +1,6 @@
 {
 	"name": "@vdegenne/kokoro",
-	"version": "0.1.17",
+	"version": "0.1.18",
 	"description": "Snar reactive controller TS helper to interact with Kokoro TTS server.",
 	"type": "module",
 	"exports": {

@@ -35,9 +35,13 @@ export function kokoroSettingsTemplate(
 				<!-- -->`;
 		case 'connection_error':
 			return html`<!-- -->
-				<md-list-item error>
-					<md-icon slot="start">error</md-icon>
-					Kokoro server unreachable
+				<md-list-item>
+					<md-icon slot="start" style="color: var(--md-sys-color-error)"
+						>error</md-icon
+					>
+					<div slot="headline" style="color: var(--md-sys-color-error)">
+						Kokoro server unreachable
+					</div>
 					<md-filled-tonal-button
 						form=""
 						slot="end"
