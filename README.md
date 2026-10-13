@@ -66,3 +66,56 @@ class SettingsDialog extends LitElement {
 	// ...
 }
 ```
+
+Use this in your store
+
+```js
+@state() kokoroEnVoiceId: EnVoice = availableVoices.En[0]
+@state() kokoroEnRandom = false
+@state() kokoroEnSpeed = 1
+
+@state() kokoroEsVoiceId: EsVoice = availableVoices.Es[0]
+@state() kokoroEsRandom = false
+@state() kokoroEsSpeed = 1
+
+@state() kokoroFrVoiceId: FrVoice = availableVoices.Fr[0]
+@state() kokoroFrRandom = false
+@state() kokoroFrSpeed = 1
+
+@state() kokoroHiVoiceId: HiVoice = availableVoices.Hi[0]
+@state() kokoroHiRandom = false
+@state() kokoroHiSpeed = 1
+
+@state() kokoroItVoiceId: ItVoice = availableVoices.It[0]
+@state() kokoroItRandom = false
+@state() kokoroItSpeed = 1
+
+@state() kokoroJaVoiceId: JaVoice = availableVoices.Ja[0]
+@state() kokoroJaRandom = false
+@state() kokoroJaSpeed = 1
+
+@state() kokoroPtVoiceId: PtVoice = availableVoices.Pt[0]
+@state() kokoroPtRandom = false
+@state() kokoroPtSpeed = 1
+
+@state() kokoroZhVoiceId: ZhVoice = availableVoices.Zh[0]
+@state() kokoroZhRandom = false
+@state() kokoroZhSpeed = 1
+```
+
+With imports being
+
+```js
+import {
+	availableVoices,
+	EnVoice,
+	EsVoice,
+	FrVoice,
+	HiVoice,
+	ItVoice,
+	JaVoice,
+	Language,
+	PtVoice,
+	ZhVoice,
+} from '@vdegenne/kokoro';
+```
