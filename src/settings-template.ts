@@ -1,6 +1,6 @@
+import {SELECT, SLIDER, SWITCH} from '@vdegenne/forms/FormBuilder.js';
 import {html} from 'lit-html';
 import {availableVoices, KokoroClient, Language} from './index.js';
-import {SELECT, SLIDER, SWITCH} from '@vdegenne/forms/FormBuilder.js';
 
 /**
  * Imports you'll need:
@@ -50,19 +50,28 @@ export function kokoroSettingsTemplate(
 					>
 				</md-list-item>
 				<!-- -->`;
-		case 'connected':
+		case 'connected': {
+			const voices = availableVoices[lang];
+			const hasMultipleVoices = voices.length > 1;
+
 			return html`<!-- -->
-				${SELECT(
-					'Voice',
-					store,
-					`kokoro${lang}VoiceId`,
-					availableVoices[lang],
-					{
-						disabled: store[`kokoro${lang}Random`],
-					},
-				)}
-				${SWITCH('Random voice', store, `kokoro${lang}Random`)}
-				${SLIDER('Voice speed', store, `kokoro${lang}Speed`, {min: 0.1, max: 1.9, step: 0.1})}
+				${SELECT('Voice', store, `kokoro${lang}VoiceId`, voices, {
+					disabled: !hasMultipleVoices || store[`kokoro${lang}Random`],
+					supportingText: !hasMultipleVoices
+						? 'Only one supported voice'
+						: undefined,
+				})}
+				${
+					hasMultipleVoices
+						? SWITCH('Random voice', store, `kokoro${lang}Random`)
+						: null
+				}
+				${SLIDER('Voice speed', store, `kokoro${lang}Speed`, {
+					min: 0.1,
+					max: 1.9,
+					step: 0.1,
+				})}
 				<!-- -->`;
+		}
 	}
 }
