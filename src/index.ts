@@ -107,6 +107,34 @@ export class KokoroClient extends ReactiveController {
 
 	private pendingPlays = new Set<string>();
 
+	async getAudio(
+		text: string,
+		{voiceId = 'af_heart', speed = 1}: PlayOptions = {},
+	): Promise<Blob> {
+		if (this.state !== 'connected') {
+			throw new Error('Kokoro is not connected');
+		}
+
+		const key = this.getCacheKey(text, voiceId, speed);
+		const cached = this.cache.get(key);
+
+		if (cached) {
+			return cached instanceof Promise ? cached : Promise.resolve(cached);
+		}
+
+		const promise = this.fetchAudio(text, voiceId, speed);
+		this.cache.set(key, promise);
+
+		try {
+			const audio = await promise;
+			this.cache.set(key, audio);
+			return audio;
+		} catch (error) {
+			this.cache.delete(key);
+			throw error;
+		}
+	}
+
 	async play(
 		text: string,
 		{voiceId = 'af_heart', speed = 1, volume = 1}: PlayOptions = {},
@@ -133,31 +161,10 @@ export class KokoroClient extends ReactiveController {
 		this.pendingPlays.add(key);
 
 		try {
-			let cached = this.cache.get(key);
-
-			if (!cached) {
-				const promise = this.fetchAudio(text, voiceId, speed);
-
-				this.cache.set(key, promise);
-
-				try {
-					const audio = await promise;
-					this.cache.set(key, audio);
-					cached = audio;
-				} catch (error) {
-					this.cache.delete(key);
-					throw error;
-				}
-			}
-
-			const audio = cached instanceof Promise ? await cached : cached;
-
+			const blob = await this.getAudio(text, {voiceId, speed});
+			await this.playBlob(blob, key, volume);
+		} finally {
 			this.pendingPlays.delete(key);
-
-			await this.playBlob(audio, key, volume);
-		} catch (error) {
-			this.pendingPlays.delete(key);
-			throw error;
 		}
 	}
 
