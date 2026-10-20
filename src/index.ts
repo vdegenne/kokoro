@@ -30,6 +30,11 @@ interface KokoroVoice {
 	description: string;
 }
 
+export interface KokoroAudio {
+	key: string;
+	audio: Blob | Promise<Blob>;
+}
+
 interface PlayOptions {
 	voiceId?: Voice;
 	speed?: number;
@@ -110,7 +115,7 @@ export class KokoroClient extends ReactiveController {
 	async getAudio(
 		text: string,
 		{voiceId = 'af_heart', speed = 1, volume_multiplier = 1}: PlayOptions = {},
-	): Promise<Blob> {
+	): Promise<KokoroAudio> {
 		if (this.state !== 'connected') {
 			throw new Error('Kokoro is not connected');
 		}
@@ -119,16 +124,16 @@ export class KokoroClient extends ReactiveController {
 		const cached = this.cache.get(key);
 
 		if (cached) {
-			return cached instanceof Promise ? cached : Promise.resolve(cached);
+			return {key, audio: cached};
 		}
 
-		const promise = this.fetchAudio(text, voiceId, speed, volume_multiplier);
-		this.cache.set(key, promise);
+		const audio = this.fetchAudio(text, voiceId, speed, volume_multiplier);
+		this.cache.set(key, audio);
 
 		try {
-			const audio = await promise;
-			this.cache.set(key, audio);
-			return audio;
+			const blob = await audio;
+			this.cache.set(key, blob);
+			return {key, audio: blob};
 		} catch (error) {
 			this.cache.delete(key);
 			throw error;
@@ -158,12 +163,12 @@ export class KokoroClient extends ReactiveController {
 		this.pendingPlays.add(key);
 
 		try {
-			const blob = await this.getAudio(text, {
+			const {audio} = await this.getAudio(text, {
 				voiceId,
 				speed,
 				volume_multiplier,
 			});
-			await this.playBlob(blob, key, 1);
+			await this.playBlob(await audio, key, 1);
 		} finally {
 			this.pendingPlays.delete(key);
 		}
