@@ -30,10 +30,10 @@ interface KokoroVoice {
 	description: string;
 }
 
-export interface KokoroAudio {
-	key: string;
-	audio: Blob | Promise<Blob>;
-}
+// export interface KokoroAudio {
+// 	key: string;
+// 	audio: Blob | Promise<Blob>;
+// }
 
 interface PlayOptions {
 	voiceId?: Voice;
@@ -115,7 +115,10 @@ export class KokoroClient extends ReactiveController {
 	async getAudio(
 		text: string,
 		{voiceId = 'af_heart', speed = 1, volume_multiplier = 1}: PlayOptions = {},
-	): Promise<KokoroAudio> {
+	): Promise<{
+		key: string;
+		audio: Blob | Promise<Blob>;
+	}> {
 		if (this.state !== 'connected') {
 			throw new Error('Kokoro is not connected');
 		}
