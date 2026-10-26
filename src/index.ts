@@ -30,11 +30,6 @@ interface KokoroVoice {
 	description: string;
 }
 
-// export interface KokoroAudio {
-// 	key: string;
-// 	audio: Blob | Promise<Blob>;
-// }
-
 interface PlayOptions {
 	voiceId?: Voice;
 	speed?: number;
@@ -49,9 +44,9 @@ export class KokoroClient extends ReactiveController {
 		'disconnected';
 
 	@state() voices: KokoroVoice[] = [];
-	@state() host: string;
-	@state() port: number;
+	@state() endpoint: string;
 
+	private voicesPromise: Promise<void> | undefined;
 	private cache = new Map<string, CachedAudio>();
 	private currentAudios = new Map<
 		string,
@@ -62,20 +57,12 @@ export class KokoroClient extends ReactiveController {
 	>();
 
 	constructor({
-		host = '127.0.0.1',
-		port = 8880,
+		endpoint = 'http://127.0.0.1:8880',
 	}: {
-		host?: string;
-		port?: number;
+		endpoint?: string;
 	} = {}) {
 		super();
-
-		this.host = host;
-		this.port = port;
-	}
-
-	private get endpoint() {
-		return `http://${this.host}:${this.port}`;
+		this.endpoint = endpoint.replace(/\/+$/, '');
 	}
 
 	async connect({reconnect = false}: {reconnect?: boolean} = {}) {
@@ -86,18 +73,14 @@ export class KokoroClient extends ReactiveController {
 		this.state = 'connecting';
 
 		try {
-			const response = await fetch(`${this.endpoint}/v1/voices`);
+			const response = await fetch(`${this.endpoint}/health`);
 
 			if (!response.ok) {
-				throw new Error(`Kokoro returned HTTP ${response.status}`);
+				throw new Error(`Kokoro health check failed: HTTP ${response.status}`);
 			}
 
-			const data = await response.json();
-
-			this.voices = data.voices;
 			this.state = 'connected';
 		} catch (error) {
-			this.voices = [];
 			this.state = 'connection_error';
 			throw error;
 		}
@@ -105,8 +88,8 @@ export class KokoroClient extends ReactiveController {
 
 	disconnect() {
 		this.stop();
-
 		this.voices = [];
+		this.voicesPromise = undefined;
 		this.state = 'disconnected';
 	}
 
@@ -203,7 +186,7 @@ export class KokoroClient extends ReactiveController {
 				voice: voiceId,
 				speed,
 				volume_multiplier,
-				response_format: 'wav',
+				response_format: 'mp3',
 			}),
 		});
 
@@ -326,16 +309,45 @@ export class KokoroClient extends ReactiveController {
 		return voices[Math.floor(Math.random() * voices.length)]!;
 	}
 
-	getVoiceTitleFromId(voiceId: Voice) {
+	private async fetchVoices(): Promise<void> {
+		if (this.state !== 'connected') {
+			throw new Error('Kokoro is not connected');
+		}
+
+		const response = await fetch(`${this.endpoint}/v1/voices`);
+
+		if (!response.ok) {
+			throw new Error(`Kokoro voices request failed: HTTP ${response.status}`);
+		}
+
+		const data: {voices: KokoroVoice[]} = await response.json();
+		this.voices = data.voices;
+	}
+
+	private async ensureVoices(): Promise<void> {
+		if (this.voices.length > 0) return;
+
+		if (!this.voicesPromise) {
+			this.voicesPromise = this.fetchVoices().catch((error) => {
+				this.voicesPromise = undefined;
+				throw error;
+			});
+		}
+
+		await this.voicesPromise;
+	}
+
+	async getVoiceTitleFromId(voiceId: Voice): Promise<string | undefined> {
+		if (this.state !== 'connected') {
+			throw new Error('Kokoro is not connected');
+		}
+
+		await this.ensureVoices();
+
 		const voice = this.voices.find((voice) => voice.id === voiceId);
+
 		if (voice) {
-			return `${voice.id} (${voice?.description})`;
+			return `${voice.id} (${voice.description})`;
 		}
 	}
-
-	getVoiceIds() {
-		return this.voices.map((v) => v.id);
-	}
 }
-
-// export const kokoro = new KokoroClient();
