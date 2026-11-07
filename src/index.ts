@@ -34,6 +34,7 @@ interface PlayOptions {
 	voiceId?: Voice;
 	speed?: number;
 	volume_multiplier?: number;
+	headers?: HeadersInit;
 }
 
 type CachedAudio = Blob | Promise<Blob>;
@@ -97,7 +98,12 @@ export class KokoroClient extends ReactiveController {
 
 	async getAudio(
 		text: string,
-		{voiceId = 'af_heart', speed = 1, volume_multiplier = 1}: PlayOptions = {},
+		{
+			voiceId = 'af_heart',
+			speed = 1,
+			volume_multiplier = 1,
+			headers = {},
+		}: PlayOptions = {},
 	): Promise<{
 		key: string;
 		audio: Blob | Promise<Blob>;
@@ -113,7 +119,13 @@ export class KokoroClient extends ReactiveController {
 			return {key, audio: cached};
 		}
 
-		const audio = this.fetchAudio(text, voiceId, speed, volume_multiplier);
+		const audio = this.fetchAudio(
+			text,
+			voiceId,
+			speed,
+			volume_multiplier,
+			headers,
+		);
 		this.cache.set(key, audio);
 
 		try {
@@ -128,7 +140,12 @@ export class KokoroClient extends ReactiveController {
 
 	async play(
 		text: string,
-		{voiceId = 'af_heart', speed = 1, volume_multiplier = 1}: PlayOptions = {},
+		{
+			voiceId = 'af_heart',
+			speed = 1,
+			volume_multiplier = 1,
+			headers = {},
+		}: PlayOptions = {},
 	) {
 		if (this.state !== 'connected') {
 			throw new Error('Kokoro is not connected');
@@ -153,6 +170,7 @@ export class KokoroClient extends ReactiveController {
 				voiceId,
 				speed,
 				volume_multiplier,
+				headers,
 			});
 			await this.playBlob(await audio, key, 1);
 		} finally {
@@ -174,12 +192,14 @@ export class KokoroClient extends ReactiveController {
 		voiceId: Voice,
 		speed: number,
 		volume_multiplier: number,
+		headers: HeadersInit = {},
 	) {
 		const response = await fetch(`${this.endpoint}/v1/audio/speech`, {
 			method: 'POST',
-			headers: {
+			headers: new Headers({
+				...Object.fromEntries(new Headers(headers)),
 				'Content-Type': 'application/json',
-			},
+			}),
 			body: JSON.stringify({
 				model: 'tts-1',
 				input: sentence,
