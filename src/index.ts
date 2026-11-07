@@ -187,7 +187,7 @@ export class KokoroClient extends ReactiveController {
 		return this.play(sentence, options);
 	}
 
-	private async fetchAudio(
+	protected async fetchAudio(
 		sentence: string,
 		voiceId: Voice,
 		speed: number,

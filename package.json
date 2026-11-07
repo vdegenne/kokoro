@@ -1,6 +1,6 @@
 {
 	"name": "@vdegenne/kokoro",
-	"version": "0.1.25",
+	"version": "0.1.26",
 	"description": "Snar reactive controller TS helper to interact with Kokoro TTS server.",
 	"type": "module",
 	"exports": {
@@ -8,7 +8,11 @@
 			"import": "./lib/index.js",
 			"types": "./lib/index.d.ts"
 		},
-		"./settings-template.js": {
+		"./proxy": {
+			"import": "./lib/proxy.js",
+			"types": "./lib/proxy.d.ts"
+		},
+		"./settings-template": {
 			"import": "./lib/settings-template.js",
 			"types": "./lib/settings-template.d.ts"
 		}
