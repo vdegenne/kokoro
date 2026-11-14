@@ -31,6 +31,7 @@ interface KokoroVoice {
 }
 
 interface PlayOptions {
+	input: string;
 	voiceId?: Voice;
 	speed?: number;
 	volume_multiplier?: number;
@@ -96,15 +97,13 @@ export class KokoroClient extends ReactiveController {
 
 	private pendingPlays = new Set<string>();
 
-	async getAudio(
-		text: string,
-		{
-			voiceId = 'af_heart',
-			speed = 1,
-			volume_multiplier = 1,
-			headers = {},
-		}: PlayOptions = {},
-	): Promise<{
+	async getAudio({
+		input,
+		voiceId = 'af_heart',
+		speed = 1,
+		volume_multiplier = 1,
+		headers = {},
+	}: PlayOptions): Promise<{
 		key: string;
 		audio: Blob | Promise<Blob>;
 	}> {
@@ -112,7 +111,7 @@ export class KokoroClient extends ReactiveController {
 			throw new Error('Kokoro is not connected');
 		}
 
-		const key = this.getCacheKey(text, voiceId, speed, volume_multiplier);
+		const key = this.getCacheKey(input, voiceId, speed, volume_multiplier);
 		const cached = this.cache.get(key);
 
 		if (cached) {
@@ -120,7 +119,7 @@ export class KokoroClient extends ReactiveController {
 		}
 
 		const audio = this.fetchAudio(
-			text,
+			input,
 			voiceId,
 			speed,
 			volume_multiplier,
@@ -138,20 +137,18 @@ export class KokoroClient extends ReactiveController {
 		}
 	}
 
-	async play(
-		text: string,
-		{
-			voiceId = 'af_heart',
-			speed = 1,
-			volume_multiplier = 1,
-			headers = {},
-		}: PlayOptions = {},
-	) {
+	async play({
+		input,
+		voiceId = 'af_heart',
+		speed = 1,
+		volume_multiplier = 1,
+		headers = {},
+	}: PlayOptions) {
 		if (this.state !== 'connected') {
 			throw new Error('Kokoro is not connected');
 		}
 
-		const key = this.getCacheKey(text, voiceId, speed, volume_multiplier);
+		const key = this.getCacheKey(input, voiceId, speed, volume_multiplier);
 
 		if (this.pendingPlays.has(key)) return;
 
@@ -166,25 +163,27 @@ export class KokoroClient extends ReactiveController {
 		this.pendingPlays.add(key);
 
 		try {
-			const {audio} = await this.getAudio(text, {
+			const {audio} = await this.getAudio({
+				input,
 				voiceId,
 				speed,
 				volume_multiplier,
 				headers,
 			});
+
 			await this.playBlob(await audio, key, 1);
 		} finally {
 			this.pendingPlays.delete(key);
 		}
 	}
 
-	async togglePlay(sentence: string, options: PlayOptions = {}) {
+	async togglePlay(options: PlayOptions) {
 		if (this.currentAudios.size > 0) {
 			this.stop();
 			return;
 		}
 
-		return this.play(sentence, options);
+		return this.play(options);
 	}
 
 	protected async fetchAudio(
