@@ -1,16 +1,16 @@
 # @vdegenne/kokoro
 
-Snar reactive controller TS helper to interact with Kokoro TTS server.
+TypeScript client for interacting with a Kokoro TTS server.
 
 ## Install
 
 ```bash
-npm i -D @vdegenne/kokoro
+npm install @vdegenne/kokoro
 ```
 
-## Usage
+## Run the server
 
-First run [`vdegenne/kokoro-server`](https://hub.docker.com/r/vdegenne/kokoro-server) on your machine
+First, run [`vdegenne/kokoro-server`](https://hub.docker.com/r/vdegenne/kokoro-server) on your machine:
 
 ```bash
 docker run --rm -p 127.0.0.1:8880:8880 \
@@ -20,102 +20,116 @@ docker run --rm -p 127.0.0.1:8880:8880 \
   vdegenne/kokoro-server:latest
 ```
 
-Then in your web app
+## Usage
+
+Create a client and check that the server is reachable:
 
 ```ts
-import {KokoroClient} from '@vdegenne/kokoro';
+import { KokoroClient } from '@vdegenne/kokoro'
 
-const kokoro = new KokoroClient();
+const kokoro = new KokoroClient()
 
 try {
-	await kokoro.connect();
-	kokoro.play('こんにちは');
-} catch (err) {
-	console.error(`Server not reachable. (${err})`);
-}
-```
+	await kokoro.connect()
 
-### Arguments
-
-```ts
-kokoro.play(
-	'こんにちは', // text
-	// options
-	{
+	const audio = await kokoro.getAudio({
+		input: 'こんにちは',
 		voiceId: 'af_sky',
 		speed: 1,
-		volume: 1,
-	},
-);
-```
+	})
 
-### Controller
-
-`kokoro` is a controller, you can bind it to a `LitElement` custom element.
-
-```ts
-import {KokoroClient} from '@vdegenne/kokoro';
-import {LitElement, customElement} from 'lit';
-import {withController} from '@snar/lit';
-
-const kokoro = new KokoroClient();
-
-@customElement('settings-dialog')
-@withController(kokoro)
-class SettingsDialog extends LitElement {
-	// ...
+	// audio is a Blob containing the generated MP3.
+} catch (error) {
+	console.error('Kokoro request failed:', error)
 }
 ```
 
-Use this in your store
+The client does not handle audio playback. It returns a `Blob` so playback can be managed by your application.
 
-```js
-@state() kokoroEnVoiceId: EnVoice = availableVoices.En[0]
-@state() kokoroEnRandom = false
-@state() kokoroEnSpeed = 1
+### Speech options
 
-@state() kokoroEsVoiceId: EsVoice = availableVoices.Es[0]
-@state() kokoroEsRandom = false
-@state() kokoroEsSpeed = 1
-
-@state() kokoroFrVoiceId: FrVoice = availableVoices.Fr[0]
-@state() kokoroFrRandom = false
-@state() kokoroFrSpeed = 1
-
-@state() kokoroHiVoiceId: HiVoice = availableVoices.Hi[0]
-@state() kokoroHiRandom = false
-@state() kokoroHiSpeed = 1
-
-@state() kokoroItVoiceId: ItVoice = availableVoices.It[0]
-@state() kokoroItRandom = false
-@state() kokoroItSpeed = 1
-
-@state() kokoroJaVoiceId: JaVoice = availableVoices.Ja[0]
-@state() kokoroJaRandom = false
-@state() kokoroJaSpeed = 1
-
-@state() kokoroPtVoiceId: PtVoice = availableVoices.Pt[0]
-@state() kokoroPtRandom = false
-@state() kokoroPtSpeed = 1
-
-@state() kokoroZhVoiceId: ZhVoice = availableVoices.Zh[0]
-@state() kokoroZhRandom = false
-@state() kokoroZhSpeed = 1
+```ts
+interface PlayOptions {
+	input: string
+	voiceId?: Voice
+	speed?: number
+	volume_multiplier?: number
+}
 ```
 
-With imports being
+Defaults:
 
-```js
+- `voiceId`: `'af_heart'`
+- `speed`: `1`
+- `volume_multiplier`: `1`
+
+### Audio requests
+
+Use `createAudioRequest()` when you need a cache key alongside the audio request:
+
+```ts
+const request = await kokoro.createAudioRequest({
+	input: 'こんにちは',
+	voiceId: 'af_sky',
+})
+
+console.log(request.key)
+
+const audio = await request.audio()
+```
+
+Audio requests are cached in memory. Concurrent requests with the same options share the same pending request.
+
+### Available voices
+
+The package exports `availableVoices`, along with language-specific voice types.
+
+```ts
 import {
 	availableVoices,
-	EnVoice,
-	EsVoice,
-	FrVoice,
-	HiVoice,
-	ItVoice,
-	JaVoice,
-	Language,
-	PtVoice,
-	ZhVoice,
-} from '@vdegenne/kokoro';
+	type EnVoice,
+	type EsVoice,
+	type FrVoice,
+	type HiVoice,
+	type ItVoice,
+	type JaVoice,
+	type Language,
+	type PtVoice,
+	type ZhVoice,
+} from '@vdegenne/kokoro'
 ```
+
+For example, you can use the available voices to type your application settings:
+
+```ts
+const englishVoice: EnVoice = availableVoices.En[0]
+const japaneseVoice: JaVoice = availableVoices.Ja[0]
+```
+
+### Voice information
+
+The client can retrieve voice information from the server:
+
+```ts
+await kokoro.ensureVoices()
+
+console.log(kokoro.voices)
+
+const title = await kokoro.getVoiceTitleFromId('af_sky')
+```
+
+`ensureVoices()` fetches the voices only when they have not already been loaded.
+
+## Core utilities
+
+The package also exposes shared speech normalization and cache-key utilities through a separate entry point:
+
+```ts
+import {
+	normalizeSpeechOptions,
+	getCacheKey,
+	getAudioPath,
+} from '@vdegenne/kokoro/core'
+```
+
+These utilities are shared with `@vdegenne/kokoro-proxy` to keep normalization and cache-key generation consistent.

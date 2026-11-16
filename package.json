@@ -1,24 +1,28 @@
 {
 	"name": "@vdegenne/kokoro",
-	"version": "0.1.27",
-	"description": "Snar reactive controller TS helper to interact with Kokoro TTS server.",
+	"version": "0.1.28",
+	"description": "Client helper to interact with Kokoro TTS server.",
 	"type": "module",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/vdegenne/kokoro.git"
+	},
+	"homepage": "https://github.com/vdegenne/kokoro#readme",
+	"bugs": {
+		"url": "https://github.com/vdegenne/kokoro/issues"
+	},
 	"exports": {
 		".": {
-			"import": "./lib/index.js",
-			"types": "./lib/index.d.ts"
+			"types": "./lib/index.d.ts",
+			"import": "./lib/index.js"
 		},
-		"./proxy": {
-			"import": "./lib/proxy.js",
-			"types": "./lib/proxy.d.ts"
-		},
-		"./settings-template": {
-			"import": "./lib/settings-template.js",
-			"types": "./lib/settings-template.d.ts"
+		"./core": {
+			"types": "./lib/core.d.ts",
+			"import": "./lib/core.js"
 		}
 	},
 	"files": [
-		"./lib"
+		"lib"
 	],
 	"scripts": {
 		"build": "wireit"
@@ -39,10 +43,5 @@
 	"devDependencies": {
 		"typescript": "^7.0.2",
 		"wireit": "^0.14.13"
-	},
-	"dependencies": {
-		"@snar/lit": "^1.8.1",
-		"@vdegenne/forms": "^0.1.90",
-		"lit-html": "^3.3.3"
 	}
 }
