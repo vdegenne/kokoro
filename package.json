@@ -1,6 +1,6 @@
 {
 	"name": "@vdegenne/kokoro",
-	"version": "0.1.32",
+	"version": "0.1.33",
 	"description": "Client helper to interact with Kokoro TTS server.",
 	"type": "module",
 	"repository": {

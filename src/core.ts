@@ -48,7 +48,8 @@ export async function getCacheKey(
 	options: KokoroSpeechOptions,
 ): Promise<string> {
 	const normalized = normalizeSpeechOptions(options)
-	const payload = JSON.stringify(Object.values(normalized))
+
+	const payload = JSON.stringify(normalized)
 
 	const data = new TextEncoder().encode(payload)
 	const hash = await crypto.subtle.digest('SHA-256', data)
