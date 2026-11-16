@@ -1,6 +1,6 @@
 export interface KokoroSpeechOptions {
 	input: string
-	voiceId?: string
+	voice?: string
 	speed?: number
 	volume_multiplier?: number
 }
@@ -14,7 +14,7 @@ export function normalizeSpeechOptions(
 
 	return {
 		input: normalize(options.input),
-		voiceId: options.voiceId ?? 'af_heart',
+		voice: options.voice ?? 'af_heart',
 		speed: options.speed ?? 1,
 		volume_multiplier: options.volume_multiplier ?? 1,
 	}

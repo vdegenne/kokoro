@@ -34,7 +34,7 @@ try {
 
 	const audio = await kokoro.getAudio({
 		input: 'こんにちは',
-		voiceId: 'af_sky',
+		voice: 'af_sky',
 		speed: 1,
 	})
 
@@ -51,7 +51,7 @@ The client does not handle audio playback. It returns a `Blob` so playback can b
 ```ts
 interface PlayOptions {
 	input: string
-	voiceId?: Voice
+	voice?: Voice
 	speed?: number
 	volume_multiplier?: number
 }
@@ -59,7 +59,7 @@ interface PlayOptions {
 
 Defaults:
 
-- `voiceId`: `'af_heart'`
+- `voice`: `'af_heart'`
 - `speed`: `1`
 - `volume_multiplier`: `1`
 
@@ -70,7 +70,7 @@ Use `createAudioRequest()` when you need a cache key alongside the audio request
 ```ts
 const request = await kokoro.createAudioRequest({
 	input: 'こんにちは',
-	voiceId: 'af_sky',
+	voice: 'af_sky',
 })
 
 console.log(request.key)

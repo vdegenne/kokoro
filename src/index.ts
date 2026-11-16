@@ -24,7 +24,7 @@ export type Voice = (typeof availableVoices)[Language][number]
 
 export interface PlayOptions {
 	input: string
-	voiceId?: Voice
+	voice?: Voice
 	speed?: number
 	volume_multiplier?: number
 }
@@ -133,7 +133,7 @@ export class KokoroClient {
 			body: JSON.stringify({
 				model: 'tts-1',
 				input: options.input,
-				voice: options.voiceId ?? 'af_heart',
+				voice: options.voice ?? 'af_heart',
 				speed: options.speed ?? 1,
 				volume_multiplier: options.volume_multiplier ?? 1,
 				response_format: 'mp3',
@@ -152,7 +152,7 @@ export class KokoroClient {
 
 	private getCacheKey(options: PlayOptions): string {
 		return [
-			options.voiceId ?? 'af_heart',
+			options.voice ?? 'af_heart',
 			options.speed ?? 1,
 			options.input,
 			options.volume_multiplier ?? 1,
@@ -188,16 +188,16 @@ export class KokoroClient {
 		await this.voicesPromise
 	}
 
-	async getVoiceTitleFromId(voiceId: Voice): Promise<string> {
+	async getVoiceTitle(voice: Voice): Promise<string> {
 		await this.ensureVoices()
 
-		const voice = this.voices.find((voice) => voice.id === voiceId)
+		const voiceInfo = this.voices.find((v) => v.id === voice)
 
-		if (!voice) {
-			throw new Error(`Unknown Kokoro voice: ${voiceId}`)
+		if (!voiceInfo) {
+			throw new Error(`Unknown Kokoro voice: ${voice}`)
 		}
 
-		return `${voice.id} (${voice.description})`
+		return `${voiceInfo.id} (${voiceInfo.description})`
 	}
 
 	// HTTP
