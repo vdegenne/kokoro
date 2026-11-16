@@ -202,7 +202,7 @@ export class KokoroClient {
 
 	// HTTP
 
-	private async fetch(url: string, options?: RequestInit): Promise<Response> {
+	protected async fetch(url: string, options?: RequestInit): Promise<Response> {
 		try {
 			return await fetch(url, options)
 		} catch (error) {
@@ -217,7 +217,7 @@ export class KokoroClient {
 
 	// Errors
 
-	private async createResponseError(
+	protected async createResponseError(
 		response: Response,
 		fallback: string,
 	): Promise<Error> {
