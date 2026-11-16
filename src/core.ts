@@ -35,3 +35,7 @@ export async function getCacheKey(
 		})
 		.join('')
 }
+
+export function getAudioPath(hash: string): string {
+	return `audio/${hash.slice(0, 2)}/${hash.slice(2, 4)}/${hash}.mp3`
+}
