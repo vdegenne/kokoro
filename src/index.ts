@@ -1,10 +1,10 @@
-import type { KokoroSpeechOptions, Voice } from './core.js'
+import type { SpeechOptions, Voice } from './core.js'
 
-export interface KokoroFetchOptions {
+export interface FetchOptions {
 	headers?: HeadersInit
 }
 
-export interface KokoroVoiceInfo {
+export interface VoiceInfo {
 	id: Voice
 	description: string
 }
@@ -19,7 +19,7 @@ type CachedAudio = Blob | Promise<Blob>
 export class KokoroClient {
 	endpoint: string
 
-	voices: KokoroVoiceInfo[] = []
+	voices: VoiceInfo[] = []
 
 	private cache = new Map<string, CachedAudio>()
 	private voicesPromise: Promise<void> | undefined
@@ -44,8 +44,8 @@ export class KokoroClient {
 	}
 
 	async getAudio(
-		options: KokoroSpeechOptions,
-		fetchOptions: KokoroFetchOptions = {},
+		options: SpeechOptions,
+		fetchOptions: FetchOptions = {},
 	): Promise<Blob> {
 		const key = this.getCacheKey(options)
 
@@ -53,8 +53,8 @@ export class KokoroClient {
 	}
 
 	async createAudioRequest(
-		options: KokoroSpeechOptions,
-		fetchOptions: KokoroFetchOptions = {},
+		options: SpeechOptions,
+		fetchOptions: FetchOptions = {},
 	): Promise<AudioRequest> {
 		const key = this.getCacheKey(options)
 
@@ -66,8 +66,8 @@ export class KokoroClient {
 
 	private async getCachedAudio(
 		key: string,
-		options: KokoroSpeechOptions,
-		fetchOptions: KokoroFetchOptions,
+		options: SpeechOptions,
+		fetchOptions: FetchOptions,
 	): Promise<Blob> {
 		const cached = this.cache.get(key)
 
@@ -92,8 +92,8 @@ export class KokoroClient {
 	}
 
 	protected async fetchAudio(
-		options: KokoroSpeechOptions,
-		fetchOptions: KokoroFetchOptions,
+		options: SpeechOptions,
+		fetchOptions: FetchOptions,
 	): Promise<Blob> {
 		const response = await this.fetch(`${this.endpoint}/v1/audio/speech`, {
 			method: 'POST',
@@ -121,7 +121,7 @@ export class KokoroClient {
 		return response.blob()
 	}
 
-	private getCacheKey(options: KokoroSpeechOptions): string {
+	private getCacheKey(options: SpeechOptions): string {
 		return [
 			options.voice ?? 'af_heart',
 			options.speed ?? 1,
@@ -140,7 +140,7 @@ export class KokoroClient {
 			)
 		}
 
-		const data: { voices: KokoroVoiceInfo[] } = await response.json()
+		const data: { voices: VoiceInfo[] } = await response.json()
 		this.voices = data.voices
 	}
 

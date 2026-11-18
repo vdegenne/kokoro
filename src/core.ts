@@ -10,6 +10,9 @@ export const availableVoices = {
 	Zh: ['zf_xiaobei', 'zf_xiaoni', 'zf_xiaoxiao', 'zf_xiaoyi', 'zm_yunjian', 'zm_yunxi', 'zm_yunxia', 'zm_yunyang'],
 } as const
 
+export type Language = keyof typeof availableVoices
+export type Voice = (typeof availableVoices)[Language][number]
+
 export type EnVoice = (typeof availableVoices)['En'][number]
 export type EsVoice = (typeof availableVoices)['Es'][number]
 export type FrVoice = (typeof availableVoices)['Fr'][number]
@@ -19,19 +22,16 @@ export type JaVoice = (typeof availableVoices)['Ja'][number]
 export type PtVoice = (typeof availableVoices)['Pt'][number]
 export type ZhVoice = (typeof availableVoices)['Zh'][number]
 
-export type Language = keyof typeof availableVoices
-export type Voice = (typeof availableVoices)[Language][number]
-
-export interface KokoroSpeechOptions {
+export interface SpeechOptions {
 	input: string
-	voice?: string
+	voice?: Voice
 	speed?: number
 	volume_multiplier?: number
 }
 
 export function normalizeSpeechOptions(
-	options: KokoroSpeechOptions,
-): Required<KokoroSpeechOptions> {
+	options: SpeechOptions,
+): Required<SpeechOptions> {
 	function normalize(value: string): string {
 		return value.replace(/[^\S\r\n]+/g, ' ').trim()
 	}
@@ -44,13 +44,9 @@ export function normalizeSpeechOptions(
 	}
 }
 
-export async function getCacheKey(
-	options: KokoroSpeechOptions,
-): Promise<string> {
+export async function getCacheKey(options: SpeechOptions): Promise<string> {
 	const normalized = normalizeSpeechOptions(options)
-
 	const payload = JSON.stringify(normalized)
-
 	const data = new TextEncoder().encode(payload)
 	const hash = await crypto.subtle.digest('SHA-256', data)
 
