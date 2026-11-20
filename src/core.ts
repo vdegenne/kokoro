@@ -1,5 +1,5 @@
 // prettier-ignore
-export const availableVoices = {
+export const KOKORO_VOICES = {
 	En: ['af_heart', 'af_aoede', 'af_bella', 'af_jessica', 'af_kore', 'af_nicole', 'af_nova', 'af_river', 'af_sarah', 'af_sky', 'af_alloy', 'am_adam', 'am_michael', 'am_echo', 'am_eric', 'am_fenrir', 'am_liam', 'am_onyx', 'am_puck', 'am_santa', 'bf_emma', 'bf_isabella', 'bf_alice', 'bf_lily', 'bm_george', 'bm_lewis', 'bm_daniel', 'bm_fable'],
 	Es: ['ef_dora', 'em_alex', 'em_santa'],
 	Fr: ['ff_siwis'],
@@ -10,17 +10,17 @@ export const availableVoices = {
 	Zh: ['zf_xiaobei', 'zf_xiaoni', 'zf_xiaoxiao', 'zf_xiaoyi', 'zm_yunjian', 'zm_yunxi', 'zm_yunxia', 'zm_yunyang'],
 } as const
 
-export type Language = keyof typeof availableVoices
-export type Voice = (typeof availableVoices)[Language][number]
+export type Language = keyof typeof KOKORO_VOICES
+export type Voice = (typeof KOKORO_VOICES)[Language][number]
 
-export type EnVoice = (typeof availableVoices)['En'][number]
-export type EsVoice = (typeof availableVoices)['Es'][number]
-export type FrVoice = (typeof availableVoices)['Fr'][number]
-export type HiVoice = (typeof availableVoices)['Hi'][number]
-export type ItVoice = (typeof availableVoices)['It'][number]
-export type JaVoice = (typeof availableVoices)['Ja'][number]
-export type PtVoice = (typeof availableVoices)['Pt'][number]
-export type ZhVoice = (typeof availableVoices)['Zh'][number]
+export type EnVoice = (typeof KOKORO_VOICES)['En'][number]
+export type EsVoice = (typeof KOKORO_VOICES)['Es'][number]
+export type FrVoice = (typeof KOKORO_VOICES)['Fr'][number]
+export type HiVoice = (typeof KOKORO_VOICES)['Hi'][number]
+export type ItVoice = (typeof KOKORO_VOICES)['It'][number]
+export type JaVoice = (typeof KOKORO_VOICES)['Ja'][number]
+export type PtVoice = (typeof KOKORO_VOICES)['Pt'][number]
+export type ZhVoice = (typeof KOKORO_VOICES)['Zh'][number]
 
 export interface SpeechOptions {
 	input: string
